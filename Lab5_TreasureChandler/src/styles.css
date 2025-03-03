@@ -1,1 +1,11 @@
 /* Treasure Chandler */
+
+/* Make the welcome label have a larger font size */
+#welcome {
+    /* Some standard properties for this node also needed to be set for compatibility */
+    font-size: 24pt;
+    padding: 8px 2px 5px 2px; 
+    -fx-font-size: 24pt;
+    -fx-alignment: center;
+    -fx-padding: 8px 2px 5px 2px;
+}
