@@ -1,11 +1,28 @@
 /* Treasure Chandler */
 
-/* Make the welcome label have a larger font size */
+/* Set the width of the menu VBox */
+#menu {
+    -fx-pref-width: 600px;
+}
+
+/* Make the welcome label have a larger font size, along with adding necessary padding and width */
 #welcome {
     /* Some standard properties for this node also needed to be set for compatibility */
-    font-size: 24pt;
-    padding: 8px 2px 5px 2px; 
-    -fx-font-size: 24pt;
+    font-size: 22.5pt;
+    padding: 8px 2px 5px 2px;
+    -fx-font-size: 22.5pt;
     -fx-alignment: center;
-    -fx-padding: 8px 2px 5px 2px;
+    -fx-padding: 8px 2px 8px 2px;
+    -fx-pref-width: 600px;
+}
+
+/* Set the horizontal gap of the lower half gridpane */
+#lower-half {
+    -fx-hgap: 10px;
+}
+
+/* Set the width and height of both the available books and shopping cart list views */
+.list-view {
+    -fx-pref-width: 275px;
+    -fx-pref-height: 190px;
 }

@@ -2,7 +2,10 @@
  * @author Treasure Chandler
  */
 
+import java.io.File;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -11,54 +14,96 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class BookGUI extends Application {
     /* Initial GUI design */
     @Override
     public void start(Stage stage) {
-        // Initialize the proper GUI components
+        // Initialize the proper GUI components alsong with the window size
         GridPane upperHalfGrid = new GridPane();
+        GridPane lowerhalfGrid = new GridPane();
+        GridPane mainGrid = new GridPane();
         MenuBar mBar = new MenuBar();
         Menu fileMenu = new Menu("File");
         Menu shoppingMenu = new Menu("Shopping");
         VBox menuVBox = new VBox(mBar);
         VBox upperHalfVBox = new VBox(menuVBox, upperHalfGrid);
         Label welcomeLabel = new Label("Welcome to the PFW Online Book Store!");
-        GridPane lowerhalfGrid = new GridPane();
         Label avBooksLabel = new Label("Available Books");
         Label cartLabel = new Label("Shopping Cart");
         ListView<String> avBooksList = new ListView<>();
         ListView<String> cartList = new ListView<>();
-        GridPane mainGrid = new GridPane();
+        final int WIDTH = 560;
+        final int HEIGHT = 295;
 
         // Create and add menu items
-        // MenuItem fileItem = new MenuItem("File");
+        MenuItem loadBooksItem = new MenuItem("Load Books");
+        MenuItem exitItem = new MenuItem("Exit");
 
-        // fileMenu.getItems().add(fileItem);
+        fileMenu.getItems().add(loadBooksItem);
+        fileMenu.getItems().add(exitItem);
 
         // Add the menu to the menu bar
         mBar.getMenus().add(fileMenu);
         mBar.getMenus().add(shoppingMenu);
 
-        // Put all of the elements together, sizing if necessary
-        menuVBox.setPrefWidth(600);
-        welcomeLabel.setPrefWidth(600);
+        // Put all of the elements together
         upperHalfGrid.add(menuVBox, 0, 0);
         upperHalfGrid.add(welcomeLabel, 0, 1);
         lowerhalfGrid.add(avBooksLabel, 0, 0);
+        lowerhalfGrid.add(avBooksList, 0, 1);
         lowerhalfGrid.add(cartLabel, 1, 0);
+        lowerhalfGrid.add(cartList, 1, 1);
         mainGrid.add(upperHalfVBox, 0, 0);
         mainGrid.add(lowerhalfGrid, 0, 1);
 
         // Instantiate the scene
-        Scene sc = new Scene(mainGrid, 600, 400);
+        Scene sc = new Scene(mainGrid, WIDTH, HEIGHT);
 
         // Load CSS file for styling
         sc.getStylesheets().add("styles.css");
 
         // Style elements with their respective ids as needed
+        menuVBox.setId("menu");
         welcomeLabel.setId("welcome");
+        avBooksList.setId("available-books");
+        lowerhalfGrid.setId("lower-half");
+
+        /* Action events */
+        // Open the file chooser when the user clicks this button
+        loadBooksItem.setOnAction(
+            new EventHandler<ActionEvent>() {
+                /**
+                 * Opens the file chooser
+                 * 
+                 * @param e     Action executed
+                 */
+                @Override
+                public void handle(ActionEvent e) {
+                    FileChooser fileChooser = new FileChooser();
+                    File projectDir = new File(System.getProperty("user.dir"));
+                    fileChooser.setInitialDirectory(projectDir);
+                    fileChooser.showOpenDialog(stage);
+                } // End of handle()
+            }
+        );
+
+        // Exit the application when the user clicks this button
+        exitItem.setOnAction(
+            new EventHandler<ActionEvent>() {
+                /**
+                 * Exits the application
+                 * 
+                 * @param e     Action executed
+                 */
+                @Override
+                public void handle(ActionEvent e) {
+                    stage.close();
+                } // End of handle()
+            }
+        );
 
         // Set the stage's title
         stage.setTitle("Book Store Shopping Cart");
