@@ -3,7 +3,15 @@
  */
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -35,6 +43,7 @@ public class BookGUI extends Application {
         Label cartLabel = new Label("Shopping Cart");
         ListView<String> avBooksList = new ListView<>();
         ListView<String> cartList = new ListView<>();
+        ObservableList<String> booksList = FXCollections.observableArrayList();
         final int WIDTH = 560;
         final int HEIGHT = 295;
 
@@ -71,6 +80,9 @@ public class BookGUI extends Application {
         avBooksList.setId("available-books");
         lowerhalfGrid.setId("lower-half");
 
+        // Populate the available books list view
+        avBooksList.setItems(booksList);
+
         /* Action events */
         // Open the file chooser when the user clicks this button
         loadBooksItem.setOnAction(
@@ -83,9 +95,25 @@ public class BookGUI extends Application {
                 @Override
                 public void handle(ActionEvent e) {
                     FileChooser fileChooser = new FileChooser();
+                    // The application will open the project folder by default, which has the Books.txt file
                     File projectDir = new File(System.getProperty("user.dir"));
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
                     fileChooser.setInitialDirectory(projectDir);
-                    fileChooser.showOpenDialog(stage);
+                    File books = fileChooser.showOpenDialog(stage);
+
+                    // Reads the file contents and adds the book titles to Available Books
+                    if (books != null) {
+                        booksList.clear();
+                        try {
+                            List<String> lines = Files.readAllLines(Path.of(books.toURI()));
+                            List<String> txtBooks = lines.stream()
+                                                    .map(line -> line.split(",")[0])
+                                                    .collect(Collectors.toList());
+                            booksList.addAll(txtBooks);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
                 } // End of handle()
             }
         );
