@@ -1,5 +1,11 @@
 /**
  * @author Treasure Chandler
+ * 
+ * Displays the GUI of the bookstore; gives users the functionality to load
+ * books from a provided .txt file, add/remove books to a shopping cart,
+ * clear the shopping cart of all books, and check out their cart, which will
+ * display calculation of the subtotal of each book's price, calculate a 7%
+ * sales tax, and the total price, which is the sum of the subtotal and the sales tax.
  */
 
 import java.io.File;
@@ -90,10 +96,7 @@ public class BookGUI extends Application {
         avBooksList.setId("available-books");
         lowerhalfGrid.setId("lower-half");
 
-        /*
-         * Populate the available books list view, along with setting
-         * up the shopping cart to be populated
-         */
+        // Populate the available books list view, along with setting up the shopping cart to be populated
         avBooksList.setItems(booksList);
         cartList.setItems(cartBooks);
 
@@ -115,20 +118,20 @@ public class BookGUI extends Application {
                     fileChooser.setInitialDirectory(projectDir);
                     File books = fileChooser.showOpenDialog(stage);
 
-                    // Reads the file contents and adds the book titles to Available Books
+                    // Reads the file contents and adds the book titles to "Available Books"
                     if (books != null) {
                         booksList.clear();
                         try {
                             List<String> lines = Files.readAllLines(Path.of(books.toURI()));
                             List<Book> txtFileBooks = lines.stream()
-                                                    .map(line -> {
-                                                        String[] parts = line.split(",");
-                                                        String title = parts[0].trim();
-                                                        double price =
-                                                            (parts.length > 1) ? Double.parseDouble(parts[1].trim()) : 0.0;
-                                                        return new Book(title, price);
-                                                    })
-                                                    .collect(Collectors.toList());
+                                                        .map(line -> {
+                                                            String[] parts = line.split(",");
+                                                            String title = parts[0].trim();
+                                                            double price =
+                                                                (parts.length > 1) ? Double.parseDouble(parts[1].trim()) : 0.0;
+                                                            return new Book(title, price);
+                                                        })
+                                                        .collect(Collectors.toList());
                             booksList.addAll(txtFileBooks);
                         } catch (IOException | NumberFormatException ex) {
                             ex.printStackTrace();
