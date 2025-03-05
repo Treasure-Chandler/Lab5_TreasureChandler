@@ -191,19 +191,37 @@ public class BookGUI extends Application {
                 @Override
                 public void handle(ActionEvent e) {
                     // Variables declaration
-                    double subtotal;
+                    double subtotal = 0.0;
                     double salesTax;
-                    double total;
+                    double finalAmount = 0.0;
 
                     // Create a seperate window showing the price calculations
                     Stage checkoutStage = new Stage();
-                    Label subtotalLabel = new Label("Subtotal: ");
-                    Label salesTaxLabel = new Label("Tax: ");
-                    Label totalLabel = new Label("Total: ");
+                    Label subtotalLabel = new Label();
+                    Label salesTaxLabel = new Label();
+                    Label finalAmountLabel = new Label();
                     Button confirmButton = new Button("OK");
-                    VBox costBox = new VBox(subtotalLabel, salesTaxLabel, totalLabel, confirmButton);
+                    VBox costBox = new VBox(subtotalLabel, salesTaxLabel, finalAmountLabel, confirmButton);
                     final int WIDTH = 130;
                     final int HEIGHT = 92;
+
+                    /* Calculations */
+                    // Total price
+                    for (Book book : cartList.getItems()) {
+                        // Add the prices of the books
+                        subtotal += book.price;
+                    }
+
+                    // Sales tax
+                    salesTax = subtotal * 0.07;
+
+                    // Final amount
+                    finalAmount = subtotal + salesTax;
+
+                    // Display the totals in the labels
+                    subtotalLabel.setText("Subtotal: " + String.format("%.2f", subtotal));
+                    salesTaxLabel.setText("Tax: " + String.format("%.2f", salesTax));
+                    finalAmountLabel.setText("Total: " + String.format("%.2f", finalAmount));
 
                     // Instantiate and set the scene
                     Scene checkoutScene = new Scene(costBox, WIDTH, HEIGHT);
@@ -215,10 +233,13 @@ public class BookGUI extends Application {
                     // Style elements with their respective ids as needed
                     subtotalLabel.setId("checkout");
                     salesTaxLabel.setId("checkout");
-                    totalLabel.setId("checkout");
+                    finalAmountLabel.setId("checkout");
 
                     // Show the window
                     checkoutStage.show();
+
+                    // Close the window when the "OK" button is clicked
+                    confirmButton.setOnAction(_ -> checkoutStage.close());
                 }
             }
         );
