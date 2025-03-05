@@ -21,6 +21,13 @@
     -fx-hgap: 10px;
 }
 
+/* Give each label in the checkout window some padding */
+#checkout {
+    /* The standard property for this node also needed to be set for compatibility */
+    padding: 0px 0px 5px 0px;
+    -fx-padding: 0px 0px 5px 0px;
+}
+
 /* Set the width and height of both the available books and shopping cart list views */
 .list-view {
     -fx-pref-width: 275px;

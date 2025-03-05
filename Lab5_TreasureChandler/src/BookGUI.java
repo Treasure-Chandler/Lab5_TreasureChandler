@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
@@ -41,9 +42,10 @@ public class BookGUI extends Application {
         Label welcomeLabel = new Label("Welcome to the PFW Online Book Store!");
         Label avBooksLabel = new Label("Available Books");
         Label cartLabel = new Label("Shopping Cart");
-        ListView<String> avBooksList = new ListView<>();
-        ListView<String> cartList = new ListView<>();
-        ObservableList<String> booksList = FXCollections.observableArrayList();
+        ListView<Book> avBooksList = new ListView<>();
+        ListView<Book> cartList = new ListView<>();
+        ObservableList<Book> booksList = FXCollections.observableArrayList();
+        ObservableList<Book> cartBooks = FXCollections.observableArrayList();
         final int WIDTH = 560;
         final int HEIGHT = 280;
 
@@ -54,6 +56,7 @@ public class BookGUI extends Application {
         MenuItem removeBook = new MenuItem("Remove Selected Book");
         MenuItem clearCart = new MenuItem("Clear Cart");
         MenuItem checkOut = new MenuItem("Check Out");
+
         fileMenu.getItems().add(loadBooks);
         fileMenu.getItems().add(exit);
         shoppingMenu.getItems().add(addBook);
@@ -87,8 +90,12 @@ public class BookGUI extends Application {
         avBooksList.setId("available-books");
         lowerhalfGrid.setId("lower-half");
 
-        // Populate the available books list view
+        /*
+         * Populate the available books list view, along with setting
+         * up the shopping cart to be populated
+         */
         avBooksList.setItems(booksList);
+        cartList.setItems(cartBooks);
 
         /* Action events */
         // Open the file chooser when the user clicks this button
@@ -113,11 +120,17 @@ public class BookGUI extends Application {
                         booksList.clear();
                         try {
                             List<String> lines = Files.readAllLines(Path.of(books.toURI()));
-                            List<String> txtBooks = lines.stream()
-                                                    .map(line -> line.split(",")[0])
+                            List<Book> txtFileBooks = lines.stream()
+                                                    .map(line -> {
+                                                        String[] parts = line.split(",");
+                                                        String title = parts[0].trim();
+                                                        double price =
+                                                            (parts.length > 1) ? Double.parseDouble(parts[1].trim()) : 0.0;
+                                                        return new Book(title, price);
+                                                    })
                                                     .collect(Collectors.toList());
-                            booksList.addAll(txtBooks);
-                        } catch (IOException ex) {
+                            booksList.addAll(txtFileBooks);
+                        } catch (IOException | NumberFormatException ex) {
                             ex.printStackTrace();
                         }
                     }
@@ -126,19 +139,7 @@ public class BookGUI extends Application {
         );
 
         // Exit the application when the user clicks this button
-        exit.setOnAction(
-            new EventHandler<ActionEvent>() {
-                /**
-                 * Exits the application
-                 * 
-                 * @param e     Action executed
-                 */
-                @Override
-                public void handle(ActionEvent e) {
-                    stage.close();
-                } // End of handle()
-            }
-        );
+        exit.setOnAction(_ -> stage.close());
 
         // Get the selected book from the available books and add it to the shopping cart
         addBook.setOnAction(
@@ -150,9 +151,10 @@ public class BookGUI extends Application {
                  */
                 @Override
                 public void handle(ActionEvent e) {
-                    String selectedBook = avBooksList.getSelectionModel().getSelectedItem();
-
-                    cartList.getItems().add(selectedBook);
+                    Book selectedBook = avBooksList.getSelectionModel().getSelectedItem();
+                    if (selectedBook != null) {
+                        cartList.getItems().add(selectedBook);
+                    }
                 } // End of handle()
             }
         );
@@ -165,16 +167,61 @@ public class BookGUI extends Application {
                  * 
                  * @param e     Action executed
                  */
+                @Override
                 public void handle(ActionEvent e) {
-                    String selectedBook = cartList.getSelectionModel().getSelectedItem();
-
-                    cartList.getItems().remove(selectedBook);
+                    Book selectedBook = cartList.getSelectionModel().getSelectedItem();
+                    if (selectedBook != null) {
+                        cartList.getItems().remove(selectedBook);
+                    }
                 } // End of handle()
             }
         );
 
-        
+        // Clear the cart
+        clearCart.setOnAction(_ -> cartBooks.clear());
 
+        // Checking out
+        checkOut.setOnAction(
+            new EventHandler<ActionEvent>() {
+                /**
+                 * Removes book from the cart
+                 * 
+                 * @param e     Action executed
+                 */
+                @Override
+                public void handle(ActionEvent e) {
+                    // Variables declaration
+                    double subtotal;
+                    double salesTax;
+                    double total;
+
+                    // Create a seperate window showing the price calculations
+                    Stage checkoutStage = new Stage();
+                    Label subtotalLabel = new Label("Subtotal: ");
+                    Label salesTaxLabel = new Label("Tax: ");
+                    Label totalLabel = new Label("Total: ");
+                    Button confirmButton = new Button("OK");
+                    VBox costBox = new VBox(subtotalLabel, salesTaxLabel, totalLabel, confirmButton);
+                    final int WIDTH = 130;
+                    final int HEIGHT = 92;
+
+                    // Instantiate and set the scene
+                    Scene checkoutScene = new Scene(costBox, WIDTH, HEIGHT);
+                    checkoutStage.setScene(checkoutScene);
+
+                    // Load CSS file for styling
+                    checkoutScene.getStylesheets().add("styles.css");
+
+                    // Style elements with their respective ids as needed
+                    subtotalLabel.setId("checkout");
+                    salesTaxLabel.setId("checkout");
+                    totalLabel.setId("checkout");
+
+                    // Show the window
+                    checkoutStage.show();
+                }
+            }
+        );
         /* End of action events section */
 
         // Set the stage's title
