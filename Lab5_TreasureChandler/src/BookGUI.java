@@ -45,20 +45,27 @@ public class BookGUI extends Application {
         ListView<String> cartList = new ListView<>();
         ObservableList<String> booksList = FXCollections.observableArrayList();
         final int WIDTH = 560;
-        final int HEIGHT = 295;
+        final int HEIGHT = 280;
 
         // Create and add menu items
-        MenuItem loadBooksItem = new MenuItem("Load Books");
-        MenuItem exitItem = new MenuItem("Exit");
-
-        fileMenu.getItems().add(loadBooksItem);
-        fileMenu.getItems().add(exitItem);
+        MenuItem loadBooks = new MenuItem("Load Books");
+        MenuItem exit = new MenuItem("Exit");
+        MenuItem addBook = new MenuItem("Add Selected Book");
+        MenuItem removeBook = new MenuItem("Remove Selected Book");
+        MenuItem clearCart = new MenuItem("Clear Cart");
+        MenuItem checkOut = new MenuItem("Check Out");
+        fileMenu.getItems().add(loadBooks);
+        fileMenu.getItems().add(exit);
+        shoppingMenu.getItems().add(addBook);
+        shoppingMenu.getItems().add(removeBook);
+        shoppingMenu.getItems().add(clearCart);
+        shoppingMenu.getItems().add(checkOut);
 
         // Add the menu to the menu bar
         mBar.getMenus().add(fileMenu);
         mBar.getMenus().add(shoppingMenu);
 
-        // Put all of the elements together
+        // Put all of the elements in the scene together
         upperHalfGrid.add(menuVBox, 0, 0);
         upperHalfGrid.add(welcomeLabel, 0, 1);
         lowerhalfGrid.add(avBooksLabel, 0, 0);
@@ -85,7 +92,7 @@ public class BookGUI extends Application {
 
         /* Action events */
         // Open the file chooser when the user clicks this button
-        loadBooksItem.setOnAction(
+        loadBooks.setOnAction(
             new EventHandler<ActionEvent>() {
                 /**
                  * Opens the file chooser
@@ -119,7 +126,7 @@ public class BookGUI extends Application {
         );
 
         // Exit the application when the user clicks this button
-        exitItem.setOnAction(
+        exit.setOnAction(
             new EventHandler<ActionEvent>() {
                 /**
                  * Exits the application
@@ -132,6 +139,43 @@ public class BookGUI extends Application {
                 } // End of handle()
             }
         );
+
+        // Get the selected book from the available books and add it to the shopping cart
+        addBook.setOnAction(
+            new EventHandler<ActionEvent>() {
+                /**
+                 * Adds book to the cart
+                 * 
+                 * @param e     Action executed
+                 */
+                @Override
+                public void handle(ActionEvent e) {
+                    String selectedBook = avBooksList.getSelectionModel().getSelectedItem();
+
+                    cartList.getItems().add(selectedBook);
+                } // End of handle()
+            }
+        );
+
+        // Remove the selected book from the shopping cart
+        removeBook.setOnAction(
+            new EventHandler<ActionEvent>() {
+                /**
+                 * Removes book from the cart
+                 * 
+                 * @param e     Action executed
+                 */
+                public void handle(ActionEvent e) {
+                    String selectedBook = cartList.getSelectionModel().getSelectedItem();
+
+                    cartList.getItems().remove(selectedBook);
+                } // End of handle()
+            }
+        );
+
+        
+
+        /* End of action events section */
 
         // Set the stage's title
         stage.setTitle("Book Store Shopping Cart");
