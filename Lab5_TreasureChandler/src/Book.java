@@ -1,6 +1,9 @@
 
 /**
  * @author Treasure Chandler
+ * 
+ * The values in this class are referenced in the BookGUI class
+ * for easy access to the titles and prices in the Books.txt file.
  */
 
 public class Book {

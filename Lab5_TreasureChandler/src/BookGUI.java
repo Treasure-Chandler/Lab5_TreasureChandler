@@ -144,7 +144,7 @@ public class BookGUI extends Application {
         // Exit the application when the user clicks this button
         exit.setOnAction(_ -> stage.close());
 
-        // Get the selected book from the available books and add it to the shopping cart
+        // Get the selected book from the available books and add it to the shopping cart when the user clicks this button
         addBook.setOnAction(
             new EventHandler<ActionEvent>() {
                 /**
@@ -162,7 +162,7 @@ public class BookGUI extends Application {
             }
         );
 
-        // Remove the selected book from the shopping cart
+        // Remove the selected book from the shopping cart when the user clicks this button
         removeBook.setOnAction(
             new EventHandler<ActionEvent>() {
                 /**
@@ -180,10 +180,10 @@ public class BookGUI extends Application {
             }
         );
 
-        // Clear the cart
+        // Clear the cart when the user clicks this button
         clearCart.setOnAction(_ -> cartBooks.clear());
 
-        // Checking out
+        // Check out the cart when the user clicks this button
         checkOut.setOnAction(
             new EventHandler<ActionEvent>() {
                 /**
